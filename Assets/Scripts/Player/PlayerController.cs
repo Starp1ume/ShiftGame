@@ -8,9 +8,11 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float jumpSpeed = 8f;
     private bool jumpRequested;
+    private bool shiftRequested;
+
 
     [SerializeField] LayerMask groundLayer;
-
+    [SerializeField] private PhaseManager phaseManager;
     private Rigidbody2D playerBody;
     private Collider2D playerCollider;
   
@@ -33,6 +35,11 @@ public class PlayerController : MonoBehaviour
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             jumpRequested = true;
+        }
+        
+        if (Keyboard.current.shiftKey.wasPressedThisFrame)
+        {
+            shiftRequested = true;
         }
 
         if (Keyboard.current.aKey.isPressed
@@ -60,6 +67,12 @@ public class PlayerController : MonoBehaviour
             }
 
             jumpRequested = false;
+        }
+
+        if (shiftRequested)
+        {
+            phaseManager.TrySwitchWorld();
+            shiftRequested = false;
         }
     }
 
