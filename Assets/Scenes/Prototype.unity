@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 1255627470}
   - component: {fileID: 1255627469}
   - component: {fileID: 1255627468}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 1629302162}
   - component: {fileID: 1629302161}
   - component: {fileID: 1629302164}
+  - component: {fileID: 1629302165}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -413,7 +414,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -425,6 +426,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1629302165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629302160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2273b7c7b92c7d54ebff0d37f414cd98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  moveSpeed: 5
+  jumpSpeed: 12
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &1705261631
 GameObject:
   m_ObjectHideFlags: 0
