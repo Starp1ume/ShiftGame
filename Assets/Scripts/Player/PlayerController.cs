@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
 
         if (shiftRequested)
         {
-            phaseManager.TrySwitchWorld();
+            phaseManager.TrySwitchWorld(playerCollider);
             shiftRequested = false;
         }
     }
