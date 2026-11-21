@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PhaseManager : MonoBehaviour
 {
+    [SerializeField] private BlockPreview blockPreview;
+
+
     [SerializeField] private GameObject warmWorld;
     [SerializeField] private GameObject coldWorld;
 
@@ -12,6 +15,10 @@ public class PhaseManager : MonoBehaviour
         ApplyWorldStatus();
     }
 
+    /// <summary>
+    /// 尝试切换时世界
+    /// </summary>
+    /// <param name="player"></param>
     public void TrySwitchWorld(Collider2D player)
     {
         Bounds bounds = player.bounds;
@@ -25,12 +32,15 @@ public class PhaseManager : MonoBehaviour
             );
         
         int blockerCount = 0;
+        SpriteRenderer blocker = null;
         foreach (Collider2D hit in hits)
         {
             if (!hit.transform.IsChildOf(targetWorld.transform))
             {
                 continue;
             }
+
+            blocker = hit.GetComponent<SpriteRenderer>();
 
             Debug.Log($"重叠：{hit.name}，所在层：{LayerMask.LayerToName(hit.gameObject.layer)}");
             blockerCount++;
@@ -45,9 +55,13 @@ public class PhaseManager : MonoBehaviour
         else
         {
             targetWorld.SetActive(false);
+            blockPreview.Show(blocker);
         }
     }
 
+    /// <summary>
+    /// 应用世界状态
+    /// </summary>
     private void ApplyWorldStatus()
     {
         warmWorld.SetActive(!isColdWorld);

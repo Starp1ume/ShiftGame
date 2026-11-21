@@ -3,19 +3,19 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] LayerMask groundLayer;
+    [SerializeField] private PhaseManager phaseManager;
+
+    private Rigidbody2D playerBody;
+    private Collider2D playerCollider;
+
+
     [SerializeField] private float moveSpeed = 5f;
     private float moveInput;
 
     [SerializeField] private float jumpSpeed = 8f;
     private bool jumpRequested;
     private bool shiftRequested;
-
-
-    [SerializeField] LayerMask groundLayer;
-    [SerializeField] private PhaseManager phaseManager;
-    private Rigidbody2D playerBody;
-    private Collider2D playerCollider;
-  
 
     private void Awake()
     {
