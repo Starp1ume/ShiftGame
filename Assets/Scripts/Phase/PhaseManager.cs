@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class PhaseManager : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class PhaseManager : MonoBehaviour
     [SerializeField] private Vector2 checkShrink = new Vector2(0.05f, 0.15f);
 
     private WorldPhase currentPhase; // 当前世界状态
+    private int lockCount = 0; // 有几个地方锁了切换
+
+    /* 对外接口 */
+    public WorldPhase CurrentPhase => currentPhase;
+    public event Action<WorldPhase> OnWorldSwitched; // 切换成功（返回目标世界状态）
+    public event Action OnSwitchFailed; // 切换失败
 
     private void Start()
     {
@@ -33,8 +40,14 @@ public class PhaseManager : MonoBehaviour
     /// 尝试切换时世界
     /// </summary>
     /// <param name="player"></param>
-    public void TrySwitchWorld(Collider2D player)
+    public bool TrySwitchWorld(Collider2D player)
     {
+        if (lockCount > 0)
+        {
+            OnSwitchFailed?.Invoke();
+            return false;
+        }
+
         Bounds bounds = player.bounds;
         WorldPhase targetPhase =
             currentPhase == WorldPhase.Cold ? WorldPhase.Warm : WorldPhase.Cold;
@@ -70,13 +83,38 @@ public class PhaseManager : MonoBehaviour
         {
             currentPhase = targetPhase;
             ApplyWorldPhase();
+            OnWorldSwitched?.Invoke(currentPhase);
+            return true;
         }
         else
         {
             targetWorld.SetActive(false);
             blockPreview.Show(blocker,bounds.center);
+            OnSwitchFailed?.Invoke();
+            return false;
         }
     }
+
+    /// <summary>
+    /// 设置世界状态并应用
+    /// </summary>
+    /// <param name="targetPhase">The world phase to set.</param>
+    public void SetWorld(WorldPhase targetPhase)
+    {
+        currentPhase = targetPhase;
+        ApplyWorldPhase();
+    }
+
+    public void AddSwitchLock()
+    {
+        lockCount++;
+    }
+
+    public void RemoveSwitchLock()
+    {
+        lockCount = Mathf.Max(0, lockCount - 1);
+    }
+
 
     /// <summary>
     /// 应用世界状态
