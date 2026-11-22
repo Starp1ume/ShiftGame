@@ -10,7 +10,7 @@ public class PhaseManager : MonoBehaviour
 
     [SerializeField] private Vector2 checkShrink = new Vector2(0.05f, 0.15f);
 
-    private bool isColdWorld = true;
+    private WorldPhase currentPhase; // 当前世界状态
 
     private void Start()
     {
@@ -20,7 +20,7 @@ public class PhaseManager : MonoBehaviour
         }
         else
         {
-            ApplyWorldStatus();
+            ApplyWorldPhase();
         }
 
         if (blockPreview == null)
@@ -36,8 +36,12 @@ public class PhaseManager : MonoBehaviour
     public void TrySwitchWorld(Collider2D player)
     {
         Bounds bounds = player.bounds;
-        GameObject targetWorld = isColdWorld ? warmWorld : coldWorld;
-        
+        WorldPhase targetPhase =
+            currentPhase == WorldPhase.Cold ? WorldPhase.Warm : WorldPhase.Cold;
+        GameObject targetWorld =
+            targetPhase == WorldPhase.Warm ? warmWorld : coldWorld;
+
+
         targetWorld.SetActive(true);
         Collider2D[] hits = Physics2D.OverlapBoxAll(
             bounds.center,
@@ -64,8 +68,8 @@ public class PhaseManager : MonoBehaviour
 
         if (blockerCount == 0)
         {
-            isColdWorld = !isColdWorld;
-            ApplyWorldStatus();
+            currentPhase = targetPhase;
+            ApplyWorldPhase();
         }
         else
         {
@@ -77,9 +81,15 @@ public class PhaseManager : MonoBehaviour
     /// <summary>
     /// 应用世界状态
     /// </summary>
-    private void ApplyWorldStatus()
+    private void ApplyWorldPhase()
     {
-        warmWorld.SetActive(!isColdWorld);
-        coldWorld.SetActive(isColdWorld);
+        warmWorld.SetActive(currentPhase == WorldPhase.Warm);
+        coldWorld.SetActive(currentPhase == WorldPhase.Cold);
     }
+}
+
+public enum WorldPhase
+{
+    Cold,
+    Warm
 }
