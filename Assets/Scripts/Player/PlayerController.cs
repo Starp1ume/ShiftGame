@@ -19,6 +19,15 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        if (groundLayer == default)
+        {
+            Debug.LogError("Ground 层级错误！", this);
+        }
+        if (phaseManager == null)
+        {
+            Debug.LogError("phaseManager 未绑定 世界管理器！", this);
+        }
+
         playerBody = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
     }
@@ -61,18 +70,18 @@ public class PlayerController : MonoBehaviour
 
         if (jumpRequested)
         {
+            jumpRequested = false;
+
             if (IsGrounded())
             {
                 playerBody.linearVelocityY = jumpSpeed;
             }
-
-            jumpRequested = false;
         }
 
         if (shiftRequested)
         {
-            phaseManager.TrySwitchWorld(playerCollider);
             shiftRequested = false;
+            phaseManager.TrySwitchWorld(playerCollider);
         }
     }
 

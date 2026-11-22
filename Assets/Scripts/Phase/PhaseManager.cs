@@ -8,11 +8,25 @@ public class PhaseManager : MonoBehaviour
     [SerializeField] private GameObject warmWorld;
     [SerializeField] private GameObject coldWorld;
 
+    [SerializeField] private Vector2 checkShrink = new Vector2(0.05f, 0.15f);
+
     private bool isColdWorld = true;
 
     private void Start()
     {
-        ApplyWorldStatus();
+        if (warmWorld == null || coldWorld == null)
+        {
+            Debug.LogError("有世界未正确绑定！", this);
+        }
+        else
+        {
+            ApplyWorldStatus();
+        }
+
+        if (blockPreview == null)
+        {
+            Debug.LogError("blockPreview 未绑定！", this);
+        }     
     }
 
     /// <summary>
@@ -27,7 +41,7 @@ public class PhaseManager : MonoBehaviour
         targetWorld.SetActive(true);
         Collider2D[] hits = Physics2D.OverlapBoxAll(
             bounds.center,
-            (Vector2)bounds.size - new Vector2(0.05f, 0.05f),
+            (Vector2)bounds.size - checkShrink,
             0f
             );
         
@@ -55,7 +69,7 @@ public class PhaseManager : MonoBehaviour
         else
         {
             targetWorld.SetActive(false);
-            blockPreview.Show(blocker);
+            blockPreview.Show(blocker,bounds.center);
         }
     }
 
