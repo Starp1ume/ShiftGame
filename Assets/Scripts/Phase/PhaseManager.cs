@@ -49,7 +49,8 @@ public class PhaseManager : MonoBehaviour
         SpriteRenderer blocker = null;
         foreach (Collider2D hit in hits)
         {
-            if (!hit.transform.IsChildOf(targetWorld.transform))
+            if (!hit.transform.IsChildOf(targetWorld.transform)
+                || hit.isTrigger)
             {
                 continue;
             }
