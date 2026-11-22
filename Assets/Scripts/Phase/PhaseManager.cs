@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-
+using System.Collections.Generic;
 public class PhaseManager : MonoBehaviour
 {
     [SerializeField] private BlockPreview blockPreview;
@@ -63,7 +63,7 @@ public class PhaseManager : MonoBehaviour
             );
         
         int blockerCount = 0;
-        SpriteRenderer blocker = null;
+        List<SpriteRenderer> blockers = new List<SpriteRenderer>();
         foreach (Collider2D hit in hits)
         {
             if (!hit.transform.IsChildOf(targetWorld.transform)
@@ -72,12 +72,12 @@ public class PhaseManager : MonoBehaviour
                 continue;
             }
 
-            blocker = hit.GetComponent<SpriteRenderer>();
-
-            Debug.Log($"重叠：{hit.name}，所在层：{LayerMask.LayerToName(hit.gameObject.layer)}");
+            blockers.Add(hit.GetComponent<SpriteRenderer>());
+            
+            //Debug.Log($"重叠：{hit.name}，所在层：{LayerMask.LayerToName(hit.gameObject.layer)}");
             blockerCount++;
         }
-        Debug.Log($"{blockerCount}个阻挡物");
+        //Debug.Log($"{blockerCount}个阻挡物");
 
         if (blockerCount == 0)
         {
@@ -89,7 +89,7 @@ public class PhaseManager : MonoBehaviour
         else
         {
             targetWorld.SetActive(false);
-            blockPreview.Show(blocker,bounds.center);
+            blockPreview.Show(blockers, bounds.center);
             OnSwitchFailed?.Invoke();
             return false;
         }
