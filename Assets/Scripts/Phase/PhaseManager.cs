@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+
 public class PhaseManager : MonoBehaviour
 {
     [SerializeField] private BlockPreview blockPreview;
@@ -61,25 +62,19 @@ public class PhaseManager : MonoBehaviour
             (Vector2)bounds.size - checkShrink,
             0f
             );
-        
-        int blockerCount = 0;
-        List<SpriteRenderer> blockers = new List<SpriteRenderer>();
+
+        bool canSwitch = true;
         foreach (Collider2D hit in hits)
         {
-            if (!hit.transform.IsChildOf(targetWorld.transform)
-                || hit.isTrigger)
+            if (hit.transform.IsChildOf(targetWorld.transform)
+                && !hit.isTrigger)
             {
-                continue;
+                //Debug.Log($"重叠：{hit.name}，所在层：{LayerMask.LayerToName(hit.gameObject.layer)}");
+                canSwitch = false; break;
             }
-
-            blockers.Add(hit.GetComponent<SpriteRenderer>());
-            
-            //Debug.Log($"重叠：{hit.name}，所在层：{LayerMask.LayerToName(hit.gameObject.layer)}");
-            blockerCount++;
         }
-        //Debug.Log($"{blockerCount}个阻挡物");
 
-        if (blockerCount == 0)
+        if (canSwitch)
         {
             currentPhase = targetPhase;
             ApplyWorldPhase();
@@ -88,8 +83,25 @@ public class PhaseManager : MonoBehaviour
         }
         else
         {
+            if (blockPreview != null)
+            {
+                Collider2D[] nearbyHits = Physics2D.OverlapCircleAll(
+                    bounds.center,
+                    blockPreview.MaskRadius
+                    );
+
+                List<SpriteRenderer> previewTargets = new List<SpriteRenderer>();
+                foreach (Collider2D hit in nearbyHits)
+                {
+                    if (hit.transform.IsChildOf(targetWorld.transform))
+                    {
+                        previewTargets.Add(hit.GetComponent<SpriteRenderer>());
+                    }
+                }
+                blockPreview.Show(previewTargets, bounds.center);
+            }
+
             targetWorld.SetActive(false);
-            blockPreview.Show(blockers, bounds.center);
             OnSwitchFailed?.Invoke();
             return false;
         }

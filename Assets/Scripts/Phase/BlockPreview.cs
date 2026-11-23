@@ -11,8 +11,9 @@ public class BlockPreview : MonoBehaviour
     [SerializeField] private float showDuration = 0.3f;
     [SerializeField] private int sortingOrder = 10;
     private List<SpriteRenderer> previewRenderers = new List<SpriteRenderer>();
-
     private float leftTime;
+
+    public float MaskRadius => maskRadius;
 
     private void Awake()
     {
