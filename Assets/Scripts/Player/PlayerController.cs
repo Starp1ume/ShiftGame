@@ -3,20 +3,31 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] LayerMask groundLayer;
+    [SerializeField] private PhaseManager phaseManager;
+
+    private Rigidbody2D playerBody;
+    private Collider2D playerCollider;
+
+
     [SerializeField] private float moveSpeed = 5f;
     private float moveInput;
 
     [SerializeField] private float jumpSpeed = 8f;
     private bool jumpRequested;
-
-    [SerializeField] LayerMask groundLayer;
-
-    private Rigidbody2D playerBody;
-    private Collider2D playerCollider;
-  
+    private bool shiftRequested;
 
     private void Awake()
     {
+        if (groundLayer == default)
+        {
+            Debug.LogError("Ground 层级错误！", this);
+        }
+        if (phaseManager == null)
+        {
+            Debug.LogError("phaseManager 未绑定 世界管理器！", this);
+        }
+
         playerBody = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
     }
@@ -33,6 +44,11 @@ public class PlayerController : MonoBehaviour
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             jumpRequested = true;
+        }
+        
+        if (Keyboard.current.shiftKey.wasPressedThisFrame)
+        {
+            shiftRequested = true;
         }
 
         if (Keyboard.current.aKey.isPressed
@@ -54,12 +70,18 @@ public class PlayerController : MonoBehaviour
 
         if (jumpRequested)
         {
+            jumpRequested = false;
+
             if (IsGrounded())
             {
                 playerBody.linearVelocityY = jumpSpeed;
             }
+        }
 
-            jumpRequested = false;
+        if (shiftRequested)
+        {
+            shiftRequested = false;
+            phaseManager.TrySwitchWorld(playerCollider);
         }
     }
 
